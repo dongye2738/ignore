@@ -9,7 +9,7 @@ const path = require('path');
  */
 function downloadFileFromGitHub(filepath) {
   // 构建GitHub API的请求URL
-  const url = `https://raw.githubusercontent.com/dongye2738/ignore/main/${filepath}`;
+  let url = `https://raw.githubusercontent.com/dongye2738/ignore/main/${filepath}`;
 
   // 发送GET请求并将响应体保存到本地文件系统上
   request.get(url, (error, response, body) => {
@@ -17,8 +17,8 @@ function downloadFileFromGitHub(filepath) {
       vscode.window.showErrorMessage(`Failed to download file: ${error.message}`);
       return;
     }
-    const filename = path.basename(filepath);
-    // const newFilename = filename.startsWith('python-git.') ? '.gitignore' : '.dockerignore';
+    let filename = path.basename(filepath);
+    // let newFilename = filename.startsWith('python-git.') ? '.gitignore' : '.dockerignore';
     let newFilename = '.' + filename.split('.').pop();
     fs.writeFile(newFilename, body, (error) => {
       if (error) {
@@ -35,7 +35,7 @@ function downloadFileFromGitHub(filepath) {
  */
 function getFileinfo() {
   // 构建GitHub API的请求URL
-  const url = `https://raw.githubusercontent.com/dongye2738/ignore/main/fileinfo.json`;
+  let url = `https://raw.githubusercontent.com/dongye2738/ignore/main/fileinfo.json`;
 
   // 发送GET请求并将内容保存到变量中
   https.get(url, (response) => {
@@ -82,7 +82,7 @@ function activate(context) {
         return;
       }
       // 解析选择的选项并下载文件
-      // const filepath = selectedOption === 'python-git' ? 'ignore/git/python.gitignore' : 'ignore/docker/python.dockerignore';
+      // let filepath = selectedOption === 'python-git' ? 'ignore/git/python.gitignore' : 'ignore/docker/python.dockerignore';
       let filepath = fileinfo[selectedOption];
       downloadFileFromGitHub(filepath);
     });
