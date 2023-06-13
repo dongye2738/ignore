@@ -1,4 +1,5 @@
 {
     "python-git": "ignore/git/python.gitignore",
-    "python-docker": "ignore/docker/python.dockerignore"
+    "python-docker": "ignore/docker/python.dockerignore",
+    "node-git": "ignore/git/node.gitignore"
 }

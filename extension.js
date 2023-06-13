@@ -1,5 +1,5 @@
 // const vscode = require('vscode');
-const request = require('request');
+// const request = require('request');
 const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
@@ -10,64 +10,46 @@ const axios = require('axios');
  */
 function downloadFileFromGitHub(filepath) {
   // 构建GitHub API的请求URL
-  let url = `https://raw.githubusercontent.com/dongye2738/ignore/main/${filepath}`;
+  let url = `https://gitee.com/miosy1996/ignore/raw/main/${filepath}`;
 
-  // 发送GET请求并将响应体保存到本地文件系统上
-  request.get(url, (error, response, body) => {
-    if (error) {
-      // vscode.window.showErrorMessage(`Failed to download file: ${error.message}`);
-      console.log(`Failed to download file: ${error.message}`);
-      return;
-    }
-    let filename = path.basename(filepath);
-    // let newFilename = filename.startsWith('python-git.') ? '.gitignore' : '.dockerignore';
-    let newFilename = '.' + filename.split('.').pop();
-    fs.writeFile(newFilename, body, (error) => {
-      if (error) {
-        // vscode.window.showErrorMessage(`Failed to save file: ${error.message}`);
-        console.log(`Failed to save file: ${error.message}`)
-        return;
+  let filename = path.basename(filepath);
+  // let newFilename = filename.startsWith('python-git.') ? '.gitignore' : '.dockerignore';
+  let newFilename = '.' + filename.split('.').pop();
+
+  axios.get(url)
+  .then(response => {
+    fs.writeFile(newFilename, response.data, err => {
+      if (err) {
+        console.error(err);
+        // vscode.window.showInformationMessage(`${err}`);
+      } else {
+        console.log('Data written to file');
+        // vscode.window.showInformationMessage(`Data written to file ${newFilename}`);
       }
-      // vscode.window.showInformationMessage(`File saved as ${newFilename}`);
-      console.log(`File saved as ${newFilename}`);
     });
+  })
+  .catch(error => {
+    console.error(error);
   });
 }
 
 /**
  * 从GitHub下载pathfile.json文件并获取其内容。
  */
-function getFileinfo() {
+async function getFileinfo() {
   // 构建GitHub API的请求URL
-  let url = `https://raw.githubusercontent.com/dongye2738/ignore/main/fileinfo.json`;
-  
-  axios.get(url)
+  // let url = `https://raw.githubusercontent.com/dongye2738/ignore/main/fileinfo.json`;
+  let url = `https://gitee.com/miosy1996/ignore/raw/main/fileinfo.json`;
+
+  return await axios.get(url)
     .then(response => {
-      console.log(response.data);
+      // console.log(response.data);
+      return response.data;
     })
     .catch(error => {
-      console.error(error);
+      // console.error(error);
+      return '';
     });
-  
-
-  // // 发送GET请求并将内容保存到变量中
-  // https.get(url, (response) => {
-  //   // let body = '';
-  //   console.log(body);
-
-  //   response.on('data', (chunk) => {
-  //     body += chunk;
-  //   });
-
-  //   response.on('end', () => {
-  //     let dict = JSON.parse(body);
-  //     return dict;
-      
-  //   });
-  // }).on('error', (error) => {
-  //   console.error(error.message);
-  //   return '';
-  // });
 }
 
 /**
@@ -106,11 +88,11 @@ function getFileinfo() {
 // exports.activate = activate;
 
 
-let fileinfo = getFileinfo();
-// console.log(fileinfo);
-
-// console.log(Object.keys(fileinfo));
-
+getFileinfo().then(data => {
+  let keys = Object.keys(data);
+  console.error('keys', keys);
+  downloadFileFromGitHub(data[keys[1]]);
+});
 // let filepath = fileinfo['python-git'];
 // downloadFileFromGitHub(filepath);
 
