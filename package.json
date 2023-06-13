@@ -1,0 +1,34 @@
+{
+    "name": "add-ignore",
+    "displayName": "Add Ignore",
+    "description": "A VS Code extension to add ignore files from GitHub",
+    "version": "1.0.0",
+    "publisher": "isyee",
+    "engines": {
+      "vscode": "^1.0.0"
+    },
+    "categories": [
+      "Other"
+    ],
+    "activationEvents": [
+      "onCommand:extension.addIgnore"
+    ],
+    "main": "./extension.js",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/dongye2738/ignore.git"
+    },
+    "keywords": [
+      "vscode",
+      "extension"
+    ],
+    "bugs": {
+      "url": "https://github.com/dongye2738/ignore/issues"
+    },
+    "homepage": "https://github.com/dongye2738/ignore#readme",
+    "license": "MIT",
+    "dependencies": {
+      "request": "^2.88.2"
+    }
+  }
+  

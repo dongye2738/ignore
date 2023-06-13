@@ -1,0 +1,4 @@
+{
+    "python-git": "ignore/git/python.gitignore",
+    "python-docker": "ignore/docker/python.dockerignore"
+}
