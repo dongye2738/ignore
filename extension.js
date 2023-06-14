@@ -1,8 +1,13 @@
-// const vscode = require('vscode');
-// const request = require('request');
+const vscode = require('vscode');
 const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
+
+let file_dist = {
+  "python-git": "ignore/git/python.gitignore",
+  "python-docker": "ignore/docker/python.dockerignore",
+  "node-git": "ignore/git/node.gitignore"
+}
 
 /**
  * 从GitHub下载文件并将其重命名的函数。
@@ -13,23 +18,21 @@ function downloadFileFromGitHub(filepath) {
   let url = `https://gitee.com/miosy1996/ignore/raw/main/${filepath}`;
 
   let filename = path.basename(filepath);
-  // let newFilename = filename.startsWith('python-git.') ? '.gitignore' : '.dockerignore';
   let newFilename = '.' + filename.split('.').pop();
 
   axios.get(url)
   .then(response => {
     fs.writeFile(newFilename, response.data, err => {
       if (err) {
-        console.error(err);
-        // vscode.window.showInformationMessage(`${err}`);
+        vscode.window.showInformationMessage(`${err}`);
       } else {
-        console.log('Data written to file');
-        // vscode.window.showInformationMessage(`Data written to file ${newFilename}`);
+        vscode.window.showInformationMessage(`Data written to file ${newFilename}`);
       }
     });
   })
   .catch(error => {
-    console.error(error);
+    // console.error(error);
+    vscode.window.showInformationMessage(`${error}`);
   });
 }
 
@@ -43,12 +46,11 @@ async function getFileinfo() {
 
   return await axios.get(url)
     .then(response => {
-      // console.log(response.data);
       return response.data;
     })
     .catch(error => {
       // console.error(error);
-      return '';
+      vscode.window.showInformationMessage(`${error}`);
     });
 }
 
@@ -56,43 +58,40 @@ async function getFileinfo() {
  * 插件被激活时的函数。
  * @param {vscode.ExtensionContext} context 插件上下文。
  */
-// function activate(context) {
-//   // 注册插件命令
-//   context.subscriptions.push(vscode.commands.registerCommand('extension.addIgnore', () => {
+function activate(context) {
+  // 注册插件命令
+  context.subscriptions.push(vscode.commands.registerCommand('extension.addIgnore', () => {
 
-//     // 获取最新文件列表
-//     const fileinfo = {
-//       'python-git': 'ignore/git/python.gitignore',
-//       'python-docker': 'ignore/docker/python.dockerignore'
-//     };
-//     // let fileinfo = getFileinfo();
+    // 获取最新文件列表
+    const fileinfo = {
+      'python-git': 'ignore/git/python.gitignore',
+      'python-docker': 'ignore/docker/python.dockerignore'
+    };
 
-//     // if (!fileinfo) {
-//     //   vscode.window.showErrorMessage('文件列表内容为空！');
-//     //   return;
-//     // }
+    getFileinfo().then(data => {
+      // 判断返回值是否为空
+      if (typeof data === 'undefined' || data === null) {
+        vscode.window.showInformationMessage(`data is undefined ${data}`);
+        data = file_dist
+      }
 
-//     // 弹出快捷选项列表
-//     vscode.window.showQuickPick(Object.keys(fileinfo), { placeHolder: 'Select an ignore type:' }).then((selectedOption) => {
-//       if (!selectedOption) {
-//         return;
-//       }
-//       // 解析选择的选项并下载文件
-//       // let filepath = selectedOption === 'python-git' ? 'ignore/git/python.gitignore' : 'ignore/docker/python.dockerignore';
-//       let filepath = fileinfo[selectedOption];
-//       downloadFileFromGitHub(filepath);
-//     });
-//   }));
-// }
+      let keys = Object.keys(data);
+      console.log('keys', keys);
+      vscode.window.showInformationMessage(`keys: ${keys}`);
 
-// exports.activate = activate;
+      // 弹出快捷选项列表
+      vscode.window.showQuickPick(keys, { placeHolder: 'Select an ignore type:' }).then((selectedOption) => {
+        if (!selectedOption) {
+          return;
+        }
+        // 解析选择的选项并下载文件
+        downloadFileFromGitHub(data[keys[1]]);
+      });
+    });
 
+  }));
+}
 
-getFileinfo().then(data => {
-  let keys = Object.keys(data);
-  console.error('keys', keys);
-  downloadFileFromGitHub(data[keys[1]]);
-});
-// let filepath = fileinfo['python-git'];
-// downloadFileFromGitHub(filepath);
+exports.activate = activate;
+
 
