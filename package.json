@@ -28,7 +28,6 @@
     "homepage": "https://github.com/dongye2738/ignore#readme",
     "license": "MIT",
     "dependencies": {
-      "request": "^2.88.2",
       "axios": "^0.27.2"
     }
   }
